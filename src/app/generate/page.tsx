@@ -97,33 +97,6 @@ export default function GeneratePage() {
       // Optionally, show an error toast to the user
     }
   };
-  
-    // Install uuid for token generation
-  useEffect(() => {
-    const installUuid = async () => {
-      try {
-        const response = await fetch('/api/install-package', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ packageName: 'uuid' }),
-        });
-        if (!response.ok) {
-          console.error('Failed to install uuid');
-        }
-        const typesResponse = await fetch('/api/install-package', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ packageName: '@types/uuid', dev: true }),
-        });
-        if (!typesResponse.ok) {
-            console.error('Failed to install @types/uuid');
-        }
-      } catch (error) {
-        console.error('Error installing uuid:', error);
-      }
-    };
-    installUuid();
-  }, []);
 
   return (
     <div className="container flex flex-col items-center justify-center text-center py-20 md:py-32 animate-in">
