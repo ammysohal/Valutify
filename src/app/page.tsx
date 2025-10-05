@@ -18,9 +18,6 @@ export default function Home() {
             <Link href="/generate">Generate Account</Link>
           </Button>
         </div>
-        <footer className="absolute bottom-[-4rem] text-sm text-muted-foreground">
-          Powered by Firebase & LinkPays API.
-        </footer>
       </div>
     </div>
   );
