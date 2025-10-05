@@ -34,7 +34,14 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Trash2 } from 'lucide-react';
-import type { Account } from '@/lib/actions';
+
+export type Account = {
+  id: string;
+  email: string;
+  password?: string;
+  status: 'unclaimed' | 'claimed';
+  timestamp: Timestamp;
+};
 
 const ADMIN_EMAIL = 'amnindersohal10@gmail.com';
 
