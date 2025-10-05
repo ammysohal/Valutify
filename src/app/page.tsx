@@ -12,7 +12,7 @@ export default function Home() {
           Welcome to Valutifyz
         </h1>
         <p className="mt-4 max-w-2xl text-lg md:text-xl text-muted-foreground animate-fade-in-up">
-          Valutifyz is your destination for free Minecraft Premium accounts. Simply solve a shortlink to instantly claim an account and unlock the full Minecraft experience.
+          Valutifyz Is Your Destination For Free Minecraft Premium Accounts Simply Solve A Shortlink To Instantly Claim An Account And Unlock The Full Minecraft Experience
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
           <Button asChild size="lg" className="bg-primary/90 hover:bg-primary text-primary-foreground glowing-box transition-all duration-300 transform hover:scale-105">
