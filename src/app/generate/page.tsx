@@ -22,6 +22,7 @@ export default function GeneratePage() {
   const [redirecting, setRedirecting] = useState(false);
   const [inStock, setInStock] = useState<boolean | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [authInitialized, setAuthInitialized] = useState(false);
   const firestore = useFirestore();
   const auth = useAuth();
 
@@ -36,6 +37,7 @@ export default function GeneratePage() {
           console.error('Anonymous sign-in failed:', authError);
         });
       }
+      setAuthInitialized(true);
     });
 
     return () => unsubscribe();
@@ -135,7 +137,7 @@ export default function GeneratePage() {
             ) : (
               <Button
                 onClick={handleGenerate}
-                disabled={loading || !inStock || !user}
+                disabled={loading || !inStock || !authInitialized || !user}
                 size="lg"
                 className="w-full h-14 md:h-16 text-lg md:text-xl font-bold bg-primary/90 hover:bg-primary text-primary-foreground"
               >
@@ -145,6 +147,11 @@ export default function GeneratePage() {
                     <span>
                       {redirecting ? 'Redirecting...' : 'Generating link...'}
                     </span>
+                  </div>
+                ) : !authInitialized ? (
+                   <div className="flex items-center gap-2">
+                    <Spinner />
+                    <span>Initializing...</span>
                   </div>
                 ) : (
                   <div className="flex items-center justify-center gap-2">
