@@ -17,9 +17,6 @@ export default function Home() {
           <Button asChild size="lg" className="bg-primary/90 hover:bg-primary text-primary-foreground glowing-box transition-all duration-300 transform hover:scale-105">
             <Link href="/generate">Generate Account</Link>
           </Button>
-          <Button asChild size="lg" variant="secondary" className="bg-secondary/90 hover:bg-secondary text-secondary-foreground glowing-box transition-all duration-300 transform hover:scale-105">
-            <Link href="/admin">Admin Login</Link>
-          </Button>
         </div>
         <footer className="absolute bottom-[-4rem] text-sm text-muted-foreground">
           Powered by Firebase & LinkPays API.
