@@ -13,7 +13,7 @@ function ClaimPageContents() {
 
     if (!token) {
         return (
-            <Alert variant="destructive">
+            <Alert>
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>Invalid claim request. No token provided.</AlertDescription>
             </Alert>
