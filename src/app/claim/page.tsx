@@ -17,7 +17,7 @@ import { signInAnonymously, onAuthStateChanged, User } from 'firebase/auth';
 
 import AccountCard from '@/components/AccountCard';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, Copy, Check } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
 import Celebration from '@/components/Celebration';
 import { Spinner } from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
@@ -136,7 +136,7 @@ export default function ClaimPage() {
           <div className="flex flex-col items-center gap-4 text-center">
              <Spinner className="h-8 w-8" />
              <Alert>
-                <Terminal className="h-4 w-4" />
+                
                 <AlertTitle>Processing</AlertTitle>
                 <AlertDescription>
                   Please wait while we generate your account. This may take a moment.
@@ -145,7 +145,7 @@ export default function ClaimPage() {
           </div>
         ) : error ? (
           <Alert variant="destructive">
-            <Terminal className="h-4 w-4" />
+            
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
@@ -195,7 +195,7 @@ export default function ClaimPage() {
           </>
         ) : (
             <Alert>
-                <Terminal className="h-4 w-4" />
+                
                 <AlertTitle>No Account Found</AlertTitle>
                 <AlertDescription>
                 We could not find an available account. Please try again later.

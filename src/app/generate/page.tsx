@@ -5,7 +5,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { useFirestore } from '@/firebase';
 import { collection, query, where, limit, getDocs } from 'firebase/firestore';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal } from 'lucide-react';
+
 
 export default function GeneratePage() {
   const [loading, setLoading] = useState(false);
@@ -73,7 +73,7 @@ export default function GeneratePage() {
                 </div>
             ) : inStock === false ? (
                 <Alert variant="destructive">
-                    <Terminal className="h-4 w-4" />
+                    
                     <AlertTitle>Out of Stock!</AlertTitle>
                     <AlertDescription>
                         Sorry, there are no accounts available right now. Please check back later.
