@@ -1,0 +1,124 @@
+{
+  "entities": {
+    "MinecraftAccount": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "MinecraftAccount",
+      "type": "object",
+      "description": "Represents a Minecraft account with its credentials and status.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Minecraft account."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address associated with the Minecraft account.",
+          "format": "email"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password for the Minecraft account."
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the Minecraft account (e.g., 'unclaimed', 'claimed')."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp indicating when the account was created or updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "password",
+        "status",
+        "timestamp"
+      ]
+    },
+    "LinkPaysTransaction": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "LinkPaysTransaction",
+      "type": "object",
+      "description": "Represents a transaction related to LinkPays shortlink verification.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the LinkPays transaction."
+        },
+        "accountId": {
+          "type": "string",
+          "description": "Reference to MinecraftAccount. (Relationship: LinkPaysTransaction 1:1 MinecraftAccount)"
+        },
+        "linkPaysUrl": {
+          "type": "string",
+          "description": "The generated LinkPays shortlink URL."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of when the LinkPays transaction was initiated.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the LinkPays transaction (e.g., 'pending', 'completed')."
+        }
+      },
+      "required": [
+        "id",
+        "accountId",
+        "linkPaysUrl",
+        "timestamp",
+        "status"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/minecraft_accounts/{accountId}",
+        "definition": {
+          "entityName": "MinecraftAccount",
+          "schema": {
+            "$ref": "#/backend/entities/MinecraftAccount"
+          },
+          "description": "Stores Minecraft account details. Only admins can create, update, or delete accounts. Anyone can read (to enable the claim page). Consider additional read rule mitigation.",
+          "params": [
+            {
+              "name": "accountId",
+              "description": "The unique identifier for the Minecraft account."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/minecraft_accounts/{accountId}/linkpays_transactions/{transactionId}",
+        "definition": {
+          "entityName": "LinkPaysTransaction",
+          "schema": {
+            "$ref": "#/backend/entities/LinkPaysTransaction"
+          },
+          "description": "Stores LinkPays transaction details associated with a specific Minecraft account. Only accessible by authenticated admins.",
+          "params": [
+            {
+              "name": "accountId",
+              "description": "The unique identifier for the Minecraft account."
+            },
+            {
+              "name": "transactionId",
+              "description": "The unique identifier for the LinkPays transaction."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to securely manage Minecraft account data and LinkPays transactions, while adhering to the core design principles and strategy mandates. The primary collection, `minecraft_accounts`, stores account credentials and status. A subcollection, `linkpays_transactions`, associated with each account, tracks LinkPays transactions related to account claiming. This structure facilitates efficient queries and straightforward security rules.\n\n**Authorization Independence:** Authorization Independence is achieved using Path-Based ownership for Minecraft Accounts. Only an admin (authenticated user) can create, update, and delete accounts, while read access is public to allow the claim page to access unclaimed accounts. LinkPays transactions are secured via path-based ownership, located in a subcollection under Minecraft Accounts. This is secured such that only authenticated admins can manage/create these transactions. In a production environment, the read rule of the `minecraft_accounts` collection should be configured with additional checks (such as IP address or rate limiting) to mitigate abuse.\n\n**QAPs (Rules are not Filters):** The structure supports secure `list` operations for Minecraft Accounts. The segregation of accounts into a dedicated collection (`minecraft_accounts`) with consistent security requirements ensures that listing accounts does not require filtering based on access levels or roles. Admin priviledges are defined by simply being an authenticated user. Because of the data model and security rules, there will be no instance of a security rule being used as a filter.\n\n**DBAC (No Custom Claims):** Roles are managed implicitly through Firebase Authentication. The Firebase Authentication system is used to authenticate administrators.\n\n**Data Clarity and Predictability:** The `status` field in both `MinecraftAccount` and `LinkPaysTransaction` entities provides explicit state modeling. Consistent naming conventions, such as using `accountId` for referencing accounts, enhance predictability."
+  }
+}
