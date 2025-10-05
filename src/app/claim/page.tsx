@@ -3,11 +3,23 @@ import AccountCard from '@/components/AccountCard';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
 import Celebration from '@/components/Celebration';
+import { Timestamp } from 'firebase/firestore';
 
 export const revalidate = 0; // Don't cache this page
 
+// Define a serializable account type for the client
+type SerializableAccount = Omit<Account, 'timestamp'> & {
+  timestamp: string;
+};
+
+
 export default async function ClaimPage() {
-  const { data: account, error } = await claimAccount();
+  const { data, error } = await claimAccount();
+
+  const account : SerializableAccount | null = data ? {
+      ...data,
+      timestamp: data.timestamp instanceof Timestamp ? data.timestamp.toDate().toISOString() : data.timestamp
+  } : null;
 
   return (
     <div className="container flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center py-12">

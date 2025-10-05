@@ -1,16 +1,37 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useAuth as useFirebaseUser } from '@/firebase'; // Renamed to avoid conflict with old useAuth
 import { useRouter } from 'next/navigation';
-import { db } from '@/lib/firebase';
-import { collection, getDocs, addDoc, serverTimestamp, query, where, Timestamp, doc, deleteDoc, orderBy } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  where,
+  Timestamp,
+  orderBy,
+  doc,
+} from 'firebase/firestore';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Spinner } from '@/components/ui/spinner';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Trash2 } from 'lucide-react';
 import type { Account } from '@/lib/actions';
@@ -18,74 +39,51 @@ import type { Account } from '@/lib/actions';
 const ADMIN_EMAIL = 'amnindersohal10@gmail.com';
 
 export default function AdminDashboard() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, isUserLoading: authLoading } = useFirebaseUser();
+  const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
 
-  const [stats, setStats] = useState({ lifetime: 0, today: 0 });
   const [accountInput, setAccountInput] = useState('');
-  const [allAccounts, setAllAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(false);
-  const [loadingStats, setLoadingStats] = useState(true);
-  const [loadingAccounts, setLoadingAccounts] = useState(true);
 
-  const fetchStatsAndAccounts = useCallback(async () => {
-    setLoadingStats(true);
-    setLoadingAccounts(true);
-    try {
-      const accountsRef = collection(db, 'accounts');
-      
-      // Fetch stats
-      const allClaimedSnapshot = await getDocs(query(accountsRef, where('status', '==', 'claimed')));
-      
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const todayTimestamp = Timestamp.fromDate(today);
-      
-      const todayClaimedSnapshot = await getDocs(
-        query(
-          accountsRef,
-          where('status', '==', 'claimed'),
-          where('timestamp', '>=', todayTimestamp)
-          )
-      );
-      
-      setStats({
-        lifetime: allClaimedSnapshot.size,
-        today: todayClaimedSnapshot.size,
-      });
-      
-      // Fetch all accounts
-      const allAccountsSnapshot = await getDocs(query(accountsRef, orderBy('timestamp', 'desc')));
-      const accountsList = allAccountsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Account));
-      setAllAccounts(accountsList);
+  // Memoize the collection reference
+  const accountsColRef = useMemoFirebase(() => collection(firestore, 'minecraft_accounts'), [firestore]);
 
-    } catch (error) {
-      console.error('Error fetching data: ', error);
+  // Use the useCollection hook to fetch accounts
+  const { data: allAccounts, isLoading: loadingAccounts, error: accountsError } = useCollection<Account>(accountsColRef);
+
+  // Derived state for stats from the fetched accounts
+  const stats = useMemo(() => {
+    if (!allAccounts) {
+      return { lifetime: 0, today: 0 };
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const lifetime = allAccounts.filter(acc => acc.status === 'claimed').length;
+    const todayClaims = allAccounts.filter(acc => {
+        return acc.status === 'claimed' && acc.timestamp && acc.timestamp.toDate() >= today
+    }).length;
+
+    return { lifetime, today: todayClaims };
+  }, [allAccounts]);
+
+  useEffect(() => {
+    if (accountsError) {
       toast({
         title: 'Error',
-        description: 'Could not fetch dashboard data.',
+        description: 'Could not fetch accounts. You may not have permission.',
         variant: 'destructive',
       });
-    } finally {
-      setLoadingStats(false);
-      setLoadingAccounts(false);
     }
-  }, [toast]);
-
+  }, [accountsError, toast]);
 
   useEffect(() => {
     if (!authLoading && (!user || user.email !== ADMIN_EMAIL)) {
       router.push('/login');
     }
   }, [user, authLoading, router]);
-  
-  useEffect(() => {
-    if (user) {
-      fetchStatsAndAccounts();
-    }
-  }, [user, fetchStatsAndAccounts]);
-
 
   const handleAccountUpload = async () => {
     if (!accountInput.trim()) {
@@ -99,23 +97,17 @@ export default function AdminDashboard() {
     setLoading(true);
     const lines = accountInput.trim().split('\n');
     let successCount = 0;
-    let errorCount = 0;
     
     const accountPromises = lines.map(async (line) => {
       const [email, password] = line.split(':');
       if (email && password) {
-        try {
-          await addDoc(collection(db, 'accounts'), {
+        addDocumentNonBlocking(accountsColRef, {
             email: email.trim(),
             password: password.trim(),
             status: 'unclaimed',
-            timestamp: serverTimestamp(),
-          });
-          successCount++;
-        } catch (e) {
-          errorCount++;
-          console.error('Error adding account: ', e);
-        }
+            timestamp: Timestamp.now(),
+        });
+        successCount++;
       }
     });
 
@@ -123,32 +115,24 @@ export default function AdminDashboard() {
     
     setLoading(false);
     toast({
-      title: 'Upload Complete',
-      description: `${successCount} accounts added. ${errorCount} failed.`,
+      title: 'Upload Queued',
+      description: `${successCount} accounts are being added.`,
     });
     setAccountInput('');
-    fetchStatsAndAccounts(); // Refresh stats and accounts list after upload
+    // Data will refresh automatically via useCollection
   };
   
   const handleDeleteAccount = async (accountId: string) => {
     if (!window.confirm('Are you sure you want to delete this account?')) {
       return;
     }
-    try {
-      await deleteDoc(doc(db, 'accounts', accountId));
-      toast({
-        title: 'Success',
-        description: 'Account deleted successfully.',
+    const docRef = doc(firestore, 'minecraft_accounts', accountId);
+    deleteDocumentNonBlocking(docRef);
+    toast({
+        title: 'Deletion Queued',
+        description: 'The account is being deleted.',
       });
-      fetchStatsAndAccounts(); // Refresh list
-    } catch (error) {
-      console.error('Error deleting account: ', error);
-      toast({
-        title: 'Error',
-        description: 'Could not delete account.',
-        variant: 'destructive',
-      });
-    }
+    // Data will refresh automatically via useCollection
   };
 
   if (authLoading || !user || user.email !== ADMIN_EMAIL) {
@@ -170,7 +154,7 @@ export default function AdminDashboard() {
             <CardDescription>Total accounts claimed.</CardDescription>
           </CardHeader>
           <CardContent>
-            {loadingStats ? <Spinner /> : <p className="text-4xl font-bold">{stats.lifetime}</p>}
+            {loadingAccounts ? <Spinner /> : <p className="text-4xl font-bold">{stats.lifetime}</p>}
           </CardContent>
         </Card>
 
@@ -180,7 +164,7 @@ export default function AdminDashboard() {
             <CardDescription>Accounts claimed today.</CardDescription>
           </CardHeader>
           <CardContent>
-            {loadingStats ? <Spinner /> : <p className="text-4xl font-bold">{stats.today}</p>}
+            {loadingAccounts ? <Spinner /> : <p className="text-4xl font-bold">{stats.today}</p>}
           </CardContent>
         </Card>
         
@@ -224,7 +208,7 @@ export default function AdminDashboard() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {allAccounts.map((account) => (
+                            {allAccounts && allAccounts.map((account) => (
                                 <TableRow key={account.id}>
                                     <TableCell>{account.email}</TableCell>
                                     <TableCell>
@@ -249,7 +233,7 @@ export default function AdminDashboard() {
                         </TableBody>
                     </Table>
                 )}
-                 {allAccounts.length === 0 && !loadingAccounts && (
+                 {(!allAccounts || allAccounts.length === 0) && !loadingAccounts && (
                     <p className="text-center text-muted-foreground py-8">No accounts found.</p>
                 )}
             </CardContent>
