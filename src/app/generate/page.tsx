@@ -47,8 +47,7 @@ export default function GeneratePage() {
                   <span>{redirecting ? 'Redirecting...' : 'Generating link...'}</span>
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-6 h-6" />
+                <div className="flex items-center justify-center gap-2">
                   <span>Generate Account</span>
                 </div>
               )}
