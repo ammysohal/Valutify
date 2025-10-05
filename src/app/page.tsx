@@ -7,7 +7,7 @@ export default function Home() {
     <div className="relative flex h-[calc(100vh-4rem)] w-full flex-col items-center justify-center overflow-hidden">
       <FloatingCubes />
       <div className="relative z-10 flex flex-col items-center justify-center text-center p-4">
-        <h1 className="font-headline text-5xl md:text-7xl font-bold glowing-text animate-fade-in-down">
+        <h1 className="font-headline text-5xl md:text-7xl font-bold text-white animate-fade-in-down">
           Welcome to Valutify
         </h1>
         <p className="mt-4 max-w-2xl text-lg md:text-xl text-muted-foreground animate-fade-in-up">
