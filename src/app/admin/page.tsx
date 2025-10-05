@@ -130,9 +130,6 @@ export default function AdminDashboard() {
   };
   
   const handleDeleteAccount = async (accountId: string) => {
-    if (!window.confirm('Are you sure you want to delete this account?')) {
-      return;
-    }
     const docRef = doc(firestore, 'minecraft_accounts', accountId);
     deleteDocumentNonBlocking(docRef);
     toast({
