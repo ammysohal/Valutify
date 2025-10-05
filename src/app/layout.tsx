@@ -4,6 +4,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Providers } from '@/components/Providers';
 import Header from '@/components/Header';
+import { FirebaseClientProvider } from '@/firebase';
 
 const fontBody = Inter({
   subsets: ['latin'],
@@ -34,12 +35,14 @@ export default function RootLayout({
           fontHeadline.variable
         )}
       >
-        <Providers>
-          <div className="relative min-h-screen bg-background">
-            <Header />
-            <main>{children}</main>
-          </div>
-        </Providers>
+        <FirebaseClientProvider>
+          <Providers>
+            <div className="relative min-h-screen bg-background">
+              <Header />
+              <main>{children}</main>
+            </div>
+          </Providers>
+        </FirebaseClientProvider>
       </body>
     </html>
   );
