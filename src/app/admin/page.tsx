@@ -144,12 +144,12 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="container py-8 md:py-12 animate-in">
-      <h1 className="text-3xl md:text-4xl font-headline font-bold mb-8 animate-fade-in-down">Admin Dashboard</h1>
+    <div className="container py-8 md:py-12">
+      <h1 className="text-3xl md:text-4xl font-headline font-bold mb-8">Admin Dashboard</h1>
 
       <div className="grid gap-6 md:gap-8">
         <div className="grid gap-6 md:gap-8 md:grid-cols-2">
-            <Card className="glassmorphism animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <Card>
             <CardHeader>
                 <CardTitle>Lifetime Claims</CardTitle>
                 <CardDescription>Total accounts claimed.</CardDescription>
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
             </CardContent>
             </Card>
 
-            <Card className="glassmorphism animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <Card>
             <CardHeader>
                 <CardTitle>Today's Claims</CardTitle>
                 <CardDescription>Accounts claimed today.</CardDescription>
@@ -170,7 +170,7 @@ export default function AdminDashboard() {
             </Card>
         </div>
         
-        <Card className="glassmorphism animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+        <Card>
           <CardHeader>
             <CardTitle>Upload Accounts</CardTitle>
             <CardDescription>Add new accounts in `email:password` format, one per line.</CardDescription>
@@ -183,13 +183,13 @@ export default function AdminDashboard() {
               rows={10}
               className="mb-4"
             />
-            <Button onClick={handleAccountUpload} disabled={loading} className="transition-transform duration-300 hover:scale-105">
+            <Button onClick={handleAccountUpload} disabled={loading}>
               {loading ? <Spinner /> : 'Upload'}
             </Button>
           </CardContent>
         </Card>
 
-        <Card className="glassmorphism animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+        <Card>
             <CardHeader>
                 <CardTitle>Manage Accounts</CardTitle>
                 <CardDescription>View and delete uploaded accounts.</CardDescription>
@@ -204,7 +204,7 @@ export default function AdminDashboard() {
                     {/* Mobile View - Card List */}
                     <div className="grid gap-4 md:hidden">
                         {allAccounts && allAccounts.map((account) => (
-                            <div key={account.id} className="p-4 border rounded-lg animate-in">
+                            <div key={account.id} className="p-4 border rounded-lg">
                                 <div className="flex justify-between items-start">
                                     <div className="space-y-2 flex-1 break-words pr-4">
                                         <p className="font-semibold break-all">{account.email}</p>
@@ -221,7 +221,7 @@ export default function AdminDashboard() {
                                         variant="ghost"
                                         size="icon"
                                         onClick={() => handleDeleteAccount(account.id)}
-                                        className="transition-transform duration-300 hover:scale-110 flex-shrink-0"
+                                        className="flex-shrink-0"
                                         >
                                         <Trash2 className="h-4 w-4 text-destructive" />
                                     </Button>
@@ -243,7 +243,7 @@ export default function AdminDashboard() {
                             </TableHeader>
                             <TableBody>
                                 {allAccounts && allAccounts.map((account) => (
-                                    <TableRow key={account.id} className="animate-in">
+                                    <TableRow key={account.id}>
                                         <TableCell className="break-all font-medium">{account.email}</TableCell>
                                         <TableCell>
                                             <Badge variant={account.status === 'claimed' ? 'secondary' : 'default'}>
@@ -258,7 +258,6 @@ export default function AdminDashboard() {
                                                 variant="ghost"
                                                 size="icon"
                                                 onClick={() => handleDeleteAccount(account.id)}
-                                                className="transition-transform duration-300 hover:scale-110"
                                                 >
                                                 <Trash2 className="h-4 w-4 text-destructive" />
                                             </Button>

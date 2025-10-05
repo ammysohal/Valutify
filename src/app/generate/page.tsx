@@ -99,18 +99,17 @@ export default function GeneratePage() {
   };
 
   return (
-    <div className="container flex flex-col items-center justify-center text-center py-20 md:py-32 animate-in">
+    <div className="container flex flex-col items-center justify-center text-center py-20 md:py-32">
       <div className="w-full max-w-2xl">
-        <div className="relative p-4 md:p-8 border rounded-lg glowing-box glassmorphism animate-fade-in-up">
+        <div className="relative p-4 md:p-8 border rounded-lg">
           <div className="absolute -top-3 -left-3 w-12 h-12 bg-primary rounded-full blur-xl opacity-50"></div>
           <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-secondary rounded-full blur-xl opacity-50"></div>
 
-          <h1 className="font-headline text-4xl md:text-5xl font-bold text-white animate-fade-in-down">
+          <h1 className="font-headline text-4xl md:text-5xl font-bold text-white">
             Generate Your Account
           </h1>
           <p
-            className="mt-4 text-muted-foreground animate-fade-in-down"
-            style={{ animationDelay: '0.1s' }}
+            className="mt-4 text-muted-foreground"
           >
             Click The Button Below To Solve A Shortlink And Claim Your Minecraft
             Premium Account
@@ -118,16 +117,14 @@ export default function GeneratePage() {
           <div className="mt-8">
             {inStock === null ? (
               <div
-                className="flex items-center justify-center gap-2 animate-fade-in-up"
-                style={{ animationDelay: '0.2s' }}
+                className="flex items-center justify-center gap-2"
               >
                 <Spinner />
                 <span>Checking for available accounts...</span>
               </div>
             ) : inStock === false ? (
               <Alert
-                className="text-white border-white bg-transparent animate-fade-in-up"
-                style={{ animationDelay: '0.2s' }}
+                className="text-white border-white bg-transparent"
               >
                 <AlertTitle>Out of Stock!</AlertTitle>
                 <AlertDescription>
@@ -140,8 +137,7 @@ export default function GeneratePage() {
                 onClick={handleGenerate}
                 disabled={loading || !inStock || !user}
                 size="lg"
-                className="w-full h-14 md:h-16 text-lg md:text-xl font-bold bg-primary/90 hover:bg-primary text-primary-foreground glowing-box transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
-                style={{ animationDelay: '0.2s' }}
+                className="w-full h-14 md:h-16 text-lg md:text-xl font-bold bg-primary/90 hover:bg-primary text-primary-foreground"
               >
                 {loading ? (
                   <div className="flex items-center gap-2">

@@ -70,12 +70,12 @@ export default function SignupForm() {
   }
 
   return (
-    <Card className="glassmorphism glowing-box">
-      <CardHeader className="animate-fade-in-down">
+    <Card>
+      <CardHeader>
         <CardTitle className="text-3xl font-headline text-center">Create an Account</CardTitle>
         <CardDescription className="text-center">Enter your details to sign up.</CardDescription>
       </CardHeader>
-      <CardContent className="animate-fade-in-up">
+      <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
@@ -117,7 +117,7 @@ export default function SignupForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full transition-transform duration-300 hover:scale-105" disabled={loading}>
+            <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <Spinner /> : 'Sign Up'}
             </Button>
           </form>

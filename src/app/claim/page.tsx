@@ -13,7 +13,7 @@ function ClaimPageContents() {
 
     if (!token) {
         return (
-            <Alert className="text-white border-white bg-transparent animate-fade-in-up">
+            <Alert variant="destructive">
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>Invalid claim request. No token provided.</AlertDescription>
             </Alert>
@@ -26,9 +26,9 @@ function ClaimPageContents() {
 
 export default function ClaimPage() {
   return (
-    <div className="container flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4 animate-in">
+    <div className="container flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4">
         <Suspense fallback={
-             <div className="flex flex-col items-center gap-4 text-center animate-fade-in-up">
+             <div className="flex flex-col items-center gap-4 text-center">
                 <Spinner className="h-8 w-8" />
                 <Alert>
                 <AlertTitle>Loading...</AlertTitle>

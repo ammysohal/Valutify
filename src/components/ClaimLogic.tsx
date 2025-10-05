@@ -169,7 +169,7 @@ export default function ClaimLogic({ claimToken }: { claimToken: string | null }
 
   if (loading) {
       return (
-          <div className="flex flex-col items-center gap-4 text-center animate-fade-in-up">
+          <div className="flex flex-col items-center gap-4 text-center">
             <Spinner className="h-8 w-8" />
             <Alert>
               <AlertTitle>Processing</AlertTitle>
@@ -183,7 +183,7 @@ export default function ClaimLogic({ claimToken }: { claimToken: string | null }
 
   if (error) {
       return (
-        <Alert className="text-white border-white bg-transparent animate-fade-in-up">
+        <Alert variant="destructive">
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
         </Alert>
@@ -195,7 +195,7 @@ export default function ClaimLogic({ claimToken }: { claimToken: string | null }
         <>
         <Celebration animationType="confetti" />
         <div className="w-full max-w-md">
-            <div className="text-center mb-6 animate-fade-in-down">
+            <div className="text-center mb-6">
               <h1 className="font-headline text-2xl md:text-3xl font-bold text-white">
                 ✅ Your Minecraft Premium Account Has Been Generated!
               </h1>
@@ -203,7 +203,7 @@ export default function ClaimLogic({ claimToken }: { claimToken: string | null }
                 Enjoy your new account. Copy the credentials below.
               </p>
             </div>
-            <Card className="glassmorphism glowing-box animate-fade-in-up">
+            <Card>
               <CardHeader>
                 <CardTitle className="text-center font-headline text-2xl">
                   Your Account
@@ -217,7 +217,7 @@ export default function ClaimLogic({ claimToken }: { claimToken: string | null }
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 transition-transform duration-300 hover:scale-110"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
                       onClick={() => handleCopy(account.email, 'email')}
                     >
                       {copied === 'email' ? (
@@ -241,7 +241,7 @@ export default function ClaimLogic({ claimToken }: { claimToken: string | null }
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 transition-transform duration-300 hover:scale-110"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
                       onClick={() =>
                         handleCopy(account.password || '', 'password')
                       }
@@ -256,7 +256,7 @@ export default function ClaimLogic({ claimToken }: { claimToken: string | null }
                 </div>
               </CardContent>
             </Card>
-            <div className="mt-6 text-center animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <div className="mt-6 text-center">
                 <Button asChild>
                     <Link href="/">Home</Link>
                 </Button>
@@ -267,7 +267,7 @@ export default function ClaimLogic({ claimToken }: { claimToken: string | null }
   }
 
   return (
-      <Alert className="animate-fade-in-up">
+      <Alert>
         <AlertTitle>No Account Found</AlertTitle>
         <AlertDescription>
           We could not find an available account. Please try again later.
