@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -62,7 +63,7 @@ export default function GeneratePage() {
             Generate Your Account
           </h1>
           <p className="mt-4 text-muted-foreground">
-            Click the button below to solve a shortlink and claim your Minecraft Premium account.
+            Click The Button Below To Solve A Shortlink And Claim Your Minecraft Premium Account
           </p>
           <div className="mt-8">
             {inStock === null ? (
