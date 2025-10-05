@@ -72,7 +72,7 @@ export default function GeneratePage() {
                     <span>Checking for available accounts...</span>
                 </div>
             ) : inStock === false ? (
-                <Alert className="text-white border-white bg-transparent animate-fade-in-up" variant="destructive" style={{ animationDelay: '0.2s' }}>
+                <Alert className="text-white border-white bg-transparent animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                     <AlertTitle>Out of Stock!</AlertTitle>
                     <AlertDescription>
                         Sorry, there are no accounts available right now. Please check back later.
