@@ -6,6 +6,7 @@ import { Button } from './ui/button';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Spinner } from './ui/spinner';
+import { Gift } from 'lucide-react';
 
 const ADMIN_EMAIL = 'amnindersohal10@gmail.com';
 
@@ -25,7 +26,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
         <Link href="/" className="mr-6 flex items-center space-x-2">
-          <span className="font-bold font-headline">Valutify</span>
+          <Gift className="h-6 w-6" />
         </Link>
         <nav className="flex items-center gap-2 md:gap-4">
           {loading ? (
