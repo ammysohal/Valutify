@@ -73,11 +73,11 @@ export default function LoginForm() {
 
   return (
     <Card className="glassmorphism glowing-box">
-      <CardHeader>
+      <CardHeader className="animate-fade-in-down">
         <CardTitle className="text-3xl font-headline text-center">Login</CardTitle>
         <CardDescription className="text-center">Enter your credentials to access your account.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="animate-fade-in-up">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
@@ -106,14 +106,14 @@ export default function LoginForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full transition-transform duration-300 hover:scale-105" disabled={loading}>
               {loading ? <Spinner /> : 'Login'}
             </Button>
           </form>
         </Form>
         <p className="mt-4 text-center text-sm text-muted-foreground">
           Don't have an account?{' '}
-          <Link href="/signup" className="underline">
+          <Link href="/signup" className="underline hover:text-primary transition-colors">
             Sign up
           </Link>
         </p>

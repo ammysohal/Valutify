@@ -129,11 +129,11 @@ export default function ClaimPage() {
   }, [user, firestore]);
 
   return (
-    <div className="container flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4">
+    <div className="container flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4 animate-in">
       {account && <Celebration animationType="confetti" />}
       <div className="w-full max-w-md">
         {loading ? (
-          <div className="flex flex-col items-center gap-4 text-center">
+          <div className="flex flex-col items-center gap-4 text-center animate-fade-in-up">
              <Spinner className="h-8 w-8" />
              <Alert>
                 
@@ -144,20 +144,20 @@ export default function ClaimPage() {
               </Alert>
           </div>
         ) : error ? (
-          <Alert className="text-white border-white bg-transparent">
+          <Alert className="text-white border-white bg-transparent animate-fade-in-up" variant="destructive">
             
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         ) : account ? (
           <>
-            <div className="text-center mb-6">
+            <div className="text-center mb-6 animate-fade-in-down">
               <h1 className="font-headline text-2xl md:text-3xl font-bold text-white">
                 ✅ Your Minecraft Premium Account Has Been Generated!
               </h1>
               <p className="text-muted-foreground mt-2">Enjoy your new account. Copy the credentials below.</p>
             </div>
-             <Card className="glassmorphism glowing-box">
+             <Card className="glassmorphism glowing-box animate-fade-in-up">
                 <CardHeader>
                     <CardTitle className="text-center font-headline text-2xl">Your Account</CardTitle>
                 </CardHeader>
@@ -169,7 +169,7 @@ export default function ClaimPage() {
                         <Button
                         size="icon"
                         variant="ghost"
-                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 transition-transform duration-300 hover:scale-110"
                         onClick={() => handleCopy(account.email, 'email')}
                         >
                         {copied === 'email' ? <Check className="h-4 w-4 text-green-400" /> : <Copy className="h-4 w-4" />}
@@ -183,7 +183,7 @@ export default function ClaimPage() {
                         <Button
                         size="icon"
                         variant="ghost"
-                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 transition-transform duration-300 hover:scale-110"
                         onClick={() => handleCopy(account.password || '', 'password')}
                         >
                         {copied === 'password' ? <Check className="h-4 w-4 text-green-400" /> : <Copy className="h-4 w-4" />}
@@ -194,7 +194,7 @@ export default function ClaimPage() {
             </Card>
           </>
         ) : (
-            <Alert>
+            <Alert className="animate-fade-in-up">
                 
                 <AlertTitle>No Account Found</AlertTitle>
                 <AlertDescription>
