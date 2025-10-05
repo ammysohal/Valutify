@@ -26,6 +26,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import Link from 'next/link';
 
 export type Account = {
   id: string;
@@ -255,6 +256,11 @@ export default function ClaimLogic({ claimToken }: { claimToken: string | null }
                 </div>
               </CardContent>
             </Card>
+            <div className="mt-6 text-center animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                <Button asChild>
+                    <Link href="/">Home</Link>
+                </Button>
+            </div>
         </div>
         </>
     )
