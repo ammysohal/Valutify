@@ -143,7 +143,7 @@ export default function ClaimPage() {
               </Alert>
           </div>
         ) : error ? (
-          <Alert variant="destructive">
+          <Alert className="text-white border-white bg-transparent">
             
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
