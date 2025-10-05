@@ -11,7 +11,6 @@ import {
   updateDoc,
   serverTimestamp,
   Timestamp,
-  orderBy,
 } from 'firebase/firestore';
 
 export type Account = {
@@ -32,10 +31,10 @@ export type SerializableAccount = Omit<Account, 'timestamp'> & {
 export async function claimAccount(): Promise<{ data?: SerializableAccount; error?: string; }> {
   try {
     const accountsRef = collection(db, 'minecraft_accounts');
+    // Removed the orderBy clause to avoid needing a composite index
     const q = query(
       accountsRef,
       where('status', '==', 'unclaimed'),
-      orderBy('timestamp', 'asc'),
       limit(1)
     );
     const querySnapshot = await getDocs(q);
