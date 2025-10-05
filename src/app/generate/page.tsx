@@ -1,13 +1,40 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { useFirestore } from '@/firebase';
+import { collection, query, where, limit, getDocs } from 'firebase/firestore';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Terminal } from 'lucide-react';
 
 export default function GeneratePage() {
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
+  const [inStock, setInStock] = useState<boolean | null>(null);
+  const firestore = useFirestore();
+
+  useEffect(() => {
+    if (!firestore) return;
+
+    const checkStock = async () => {
+      try {
+        const accountsRef = collection(firestore, 'minecraft_accounts');
+        const q = query(accountsRef, where('status', '==', 'unclaimed'), limit(1));
+        const querySnapshot = await getDocs(q);
+        setInStock(!querySnapshot.empty);
+      } catch (error) {
+        console.error("Error checking stock:", error);
+        setInStock(false); // Assume out of stock on error
+      }
+    };
+
+    checkStock();
+  }, [firestore]);
+
 
   const handleGenerate = () => {
+    if (!inStock) return;
+
     setLoading(true);
 
     setTimeout(() => {
@@ -39,23 +66,38 @@ export default function GeneratePage() {
             Click the button below to solve a shortlink and claim your Minecraft Premium account.
           </p>
           <div className="mt-8">
-            <Button
-              onClick={handleGenerate}
-              disabled={loading}
-              size="lg"
-              className="w-full h-16 text-xl font-bold bg-primary/90 hover:bg-primary text-primary-foreground glowing-box transition-all duration-300 transform hover:scale-105"
-            >
-              {loading ? (
-                <div className="flex items-center gap-2">
-                  <Spinner />
-                  <span>{redirecting ? 'Redirecting...' : 'Generating link...'}</span>
+            {inStock === null ? (
+                 <div className="flex items-center justify-center gap-2">
+                    <Spinner />
+                    <span>Checking for available accounts...</span>
                 </div>
-              ) : (
-                <div className="flex items-center justify-center gap-2">
-                  <span>Generate Account</span>
-                </div>
-              )}
-            </Button>
+            ) : inStock === false ? (
+                <Alert variant="destructive">
+                    <Terminal className="h-4 w-4" />
+                    <AlertTitle>Out of Stock!</AlertTitle>
+                    <AlertDescription>
+                        Sorry, there are no accounts available right now. Please check back later.
+                    </AlertDescription>
+                </Alert>
+            ) : (
+                <Button
+                    onClick={handleGenerate}
+                    disabled={loading || !inStock}
+                    size="lg"
+                    className="w-full h-16 text-xl font-bold bg-primary/90 hover:bg-primary text-primary-foreground glowing-box transition-all duration-300 transform hover:scale-105"
+                    >
+                    {loading ? (
+                        <div className="flex items-center gap-2">
+                        <Spinner />
+                        <span>{redirecting ? 'Redirecting...' : 'Generating link...'}</span>
+                        </div>
+                    ) : (
+                        <div className="flex items-center justify-center gap-2">
+                        <span>Generate Account</span>
+                        </div>
+                    )}
+                </Button>
+            )}
           </div>
         </div>
       </div>
