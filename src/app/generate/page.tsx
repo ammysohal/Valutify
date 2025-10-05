@@ -71,7 +71,7 @@ export default function GeneratePage() {
                     <span>Checking for available accounts...</span>
                 </div>
             ) : inStock === false ? (
-                <Alert variant="destructive" className="text-white border-white">
+                <Alert className="text-white border-white bg-transparent">
                     <AlertTitle>Out of Stock!</AlertTitle>
                     <AlertDescription>
                         Sorry, there are no accounts available right now. Please check back later.
