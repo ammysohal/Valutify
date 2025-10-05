@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useAuth as useFirebaseUser } from '@/firebase'; // Renamed to avoid conflict with old useAuth
+import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import {
   collection,
@@ -39,7 +39,7 @@ import type { Account } from '@/lib/actions';
 const ADMIN_EMAIL = 'amnindersohal10@gmail.com';
 
 export default function AdminDashboard() {
-  const { user, isUserLoading: authLoading } = useFirebaseUser();
+  const { user, isUserLoading: authLoading } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
