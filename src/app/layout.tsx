@@ -18,7 +18,7 @@ const fontHeadline = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: 'Valutifyz - Generate Minecraft Premium Accounts',
-  description: 'Generate Minecraft Premium Accounts Instantly — Earn Rewards by Solving Shortlinks.',
+  description: 'Solve a shortlink to instantly claim your free Minecraft Premium account.',
 };
 
 export default function RootLayout({
