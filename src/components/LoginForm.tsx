@@ -40,9 +40,9 @@ export default function LoginForm() {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({
         title: 'Login Successful',
-        description: 'Redirecting to dashboard...',
+        description: 'Redirecting to homepage...',
       });
-      router.push('/dashboard');
+      router.push('/');
     } catch (error: any) {
       toast({
         title: 'Login Failed',

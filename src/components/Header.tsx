@@ -29,9 +29,6 @@ export default function Header() {
             <div className="h-8 w-20 animate-pulse rounded-md bg-muted" />
           ) : user ? (
             <>
-              <Button asChild variant="ghost">
-                <Link href="/dashboard">Dashboard</Link>
-              </Button>
               <Button variant="outline" onClick={handleLogout}>Logout</Button>
             </>
           ) : (

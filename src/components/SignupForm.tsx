@@ -46,9 +46,9 @@ export default function SignupForm() {
       await createUserWithEmailAndPassword(auth, values.email, values.password);
       toast({
         title: 'Signup Successful',
-        description: 'Redirecting to dashboard...',
+        description: 'Redirecting to homepage...',
       });
-      router.push('/dashboard');
+      router.push('/');
     } catch (error: any) {
       toast({
         title: 'Signup Failed',
