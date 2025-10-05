@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useFirestore, useAuth } from '@/firebase';
 import {
   collection,
@@ -40,7 +40,7 @@ export type SerializableAccount = Omit<Account, 'timestamp'> & {
   timestamp: string;
 };
 
-export default function ClaimPage() {
+function ClaimContent() {
   const [account, setAccount] = useState<SerializableAccount | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -263,5 +263,25 @@ export default function ClaimPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ClaimPage() {
+  return (
+    <Suspense fallback={
+      <div className="container flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <Spinner className="h-8 w-8" />
+          <Alert>
+            <AlertTitle>Loading</AlertTitle>
+            <AlertDescription>
+              Please wait while we load the claim page.
+            </AlertDescription>
+          </Alert>
+        </div>
+      </div>
+    }>
+      <ClaimContent />
+    </Suspense>
   );
 }
