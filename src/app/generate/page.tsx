@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { Sparkles } from 'lucide-react';
 
 export default function GeneratePage() {
   const [loading, setLoading] = useState(false);
@@ -12,8 +11,9 @@ export default function GeneratePage() {
     setLoading(true);
 
     setTimeout(() => {
-      const claimUrl = `${window.location.origin}/claim`;
-      const encodedUrl = encodeURIComponent(claimUrl);
+      // Append a timestamp to make the URL unique each time
+      const uniqueClaimUrl = `${window.location.origin}/claim?t=${Date.now()}`;
+      const encodedUrl = encodeURIComponent(uniqueClaimUrl);
       const linkPaysUrl = `https://linkpays.in/st?api=3295db9608441da32b8049d61b1675cde9802c5d&url=${encodedUrl}`;
       
       setRedirecting(true);
