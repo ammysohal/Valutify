@@ -11,12 +11,16 @@ export default function GeneratePage() {
     setLoading(true);
 
     setTimeout(() => {
-      // Append a timestamp to make the URL unique each time
-      const uniqueClaimUrl = `${window.location.origin}/claim?t=${Date.now()}`;
-      const encodedUrl = encodeURIComponent(uniqueClaimUrl);
-      const linkPaysUrl = `https://linkpays.in/st?api=3295db9608441da32b8049d61b1675cde9802c5d&url=${encodedUrl}`;
+      // The user must solve the shortlink to be redirected to this URL.
+      // A unique timestamp prevents caching issues.
+      const claimUrl = `${window.location.origin}/claim?t=${Date.now()}`;
+      const encodedClaimUrl = encodeURIComponent(claimUrl);
+      
+      // This is the shortlink URL the user will be sent to.
+      const linkPaysUrl = `https://linkpays.in/st?api=3295db9608441da32b8049d61b1675cde9802c5d&url=${encodedClaimUrl}`;
       
       setRedirecting(true);
+      // Redirect the user to the shortlink service.
       window.location.href = linkPaysUrl;
     }, 1500);
   };
