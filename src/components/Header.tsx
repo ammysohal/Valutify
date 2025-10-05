@@ -2,20 +2,23 @@
 
 import Link from 'next/link';
 import { AnimatedLogo } from './AnimatedLogo';
-import { useAuth } from '@/context/AuthContext';
+import { useUser, useAuth } from '@/firebase';
 import { Button } from './ui/button';
-import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import { Spinner } from './ui/spinner';
 
 const ADMIN_EMAIL = 'amnindersohal10@gmail.com';
 
 export default function Header() {
-  const { user, loading } = useAuth();
+  const { user, isUserLoading: loading } = useUser();
+  const auth = useAuth();
   const router = useRouter();
 
   const handleLogout = async () => {
-    await signOut(auth);
+    if (auth) {
+      await signOut(auth);
+    }
     router.push('/');
   };
 
@@ -28,7 +31,7 @@ export default function Header() {
         </Link>
         <nav className="flex items-center gap-4">
           {loading ? (
-            <div className="h-8 w-20 animate-pulse rounded-md bg-muted" />
+            <Spinner />
           ) : user ? (
             <>
               {user.email === ADMIN_EMAIL && (
