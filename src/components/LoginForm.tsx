@@ -21,7 +21,7 @@ const formSchema = z.object({
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
 
-const ADMIN_EMAIL = 'amninderoshal10@gmail.com';
+const ADMIN_EMAIL = 'amnindersohal10@gmail.com';
 
 export default function LoginForm() {
   const router = useRouter();

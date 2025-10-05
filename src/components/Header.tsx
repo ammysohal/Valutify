@@ -8,7 +8,7 @@ import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 
-const ADMIN_EMAIL = 'amninderoshal10@gmail.com';
+const ADMIN_EMAIL = 'amnindersohal10@gmail.com';
 
 export default function Header() {
   const { user, loading } = useAuth();

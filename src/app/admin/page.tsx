@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Trash2 } from 'lucide-react';
 import type { Account } from '@/lib/actions';
 
-const ADMIN_EMAIL = 'amninderoshal10@gmail.com';
+const ADMIN_EMAIL = 'amnindersohal10@gmail.com';
 
 export default function AdminDashboard() {
   const { user, loading: authLoading } = useAuth();
