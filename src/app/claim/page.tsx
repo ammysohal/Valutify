@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -151,7 +152,7 @@ export default function ClaimPage() {
         ) : account ? (
           <>
             <div className="text-center mb-6">
-              <h1 className="font-headline text-2xl md:text-3xl font-bold text-green-400">
+              <h1 className="font-headline text-2xl md:text-3xl font-bold text-white">
                 ✅ Your Minecraft Premium Account Has Been Generated!
               </h1>
               <p className="text-muted-foreground mt-2">Enjoy your new account. Copy the credentials below.</p>
