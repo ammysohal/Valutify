@@ -21,6 +21,8 @@ const formSchema = z.object({
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
 
+const ADMIN_EMAIL = 'amninderoshal10@gmail.com';
+
 export default function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
@@ -37,12 +39,18 @@ export default function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({
         title: 'Login Successful',
-        description: 'Redirecting to homepage...',
+        description: 'Redirecting...',
       });
-      router.push('/');
+
+      if (userCredential.user.email === ADMIN_EMAIL) {
+        router.push('/admin');
+      } else {
+        router.push('/');
+      }
+
     } catch (error: any) {
       toast({
         title: 'Login Failed',

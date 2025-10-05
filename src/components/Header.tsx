@@ -8,6 +8,8 @@ import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 
+const ADMIN_EMAIL = 'amninderoshal10@gmail.com';
+
 export default function Header() {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -29,7 +31,12 @@ export default function Header() {
             <div className="h-8 w-20 animate-pulse rounded-md bg-muted" />
           ) : user ? (
             <>
-              <Button variant="outline" onClick={handleLogout}>Logout</Button>
+              {user.email === ADMIN_EMAIL && (
+                <Button asChild variant="outline">
+                  <Link href="/admin">Dashboard</Link>
+                </Button>
+              )}
+              <Button variant="ghost" onClick={handleLogout}>Logout</Button>
             </>
           ) : (
             <>
