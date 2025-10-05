@@ -2,16 +2,19 @@
 
 import Link from 'next/link';
 import { AnimatedLogo } from './AnimatedLogo';
-import { useUser } from '@/firebase';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from './ui/button';
-import { getAuth, signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
-  const { user, isUserLoading } = useUser();
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
   const handleLogout = async () => {
-    const auth = getAuth();
     await signOut(auth);
+    router.push('/');
   };
 
   return (
@@ -22,10 +25,15 @@ export default function Header() {
           <span className="font-bold font-headline">Valutify</span>
         </Link>
         <nav className="flex items-center gap-4">
-          {isUserLoading ? (
+          {loading ? (
             <div className="h-8 w-20 animate-pulse rounded-md bg-muted" />
           ) : user ? (
-            <Button variant="ghost" onClick={handleLogout}>Logout</Button>
+            <>
+              <Button asChild variant="ghost">
+                <Link href="/dashboard">Dashboard</Link>
+              </Button>
+              <Button variant="outline" onClick={handleLogout}>Logout</Button>
+            </>
           ) : (
             <>
               <Button asChild variant="ghost">
