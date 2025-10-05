@@ -27,24 +27,24 @@ export default function Header() {
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <span className="font-bold font-headline">Valutify</span>
         </Link>
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-2 md:gap-4">
           {loading ? (
             <Spinner />
           ) : user ? (
             <>
               {user.email === ADMIN_EMAIL && (
-                <Button asChild variant="outline">
+                <Button asChild variant="outline" size="sm">
                   <Link href="/admin">Dashboard</Link>
                 </Button>
               )}
-              <Button variant="ghost" onClick={handleLogout}>Logout</Button>
+              <Button variant="ghost" onClick={handleLogout} size="sm">Logout</Button>
             </>
           ) : (
             <>
-              <Button asChild variant="ghost">
+              <Button asChild variant="ghost" size="sm">
                 <Link href="/login">Login</Link>
               </Button>
-              <Button asChild>
+              <Button asChild size="sm">
                 <Link href="/signup">Sign Up</Link>
               </Button>
             </>

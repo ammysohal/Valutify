@@ -54,7 +54,7 @@ export default function GeneratePage() {
   return (
     <div className="container flex flex-col items-center justify-center text-center py-20 md:py-32">
       <div className="w-full max-w-2xl">
-        <div className="relative p-8 border rounded-lg glowing-box glassmorphism">
+        <div className="relative p-4 md:p-8 border rounded-lg glowing-box glassmorphism">
           <div className="absolute -top-3 -left-3 w-12 h-12 bg-primary rounded-full blur-xl opacity-50"></div>
           <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-secondary rounded-full blur-xl opacity-50"></div>
           
@@ -82,7 +82,7 @@ export default function GeneratePage() {
                     onClick={handleGenerate}
                     disabled={loading || !inStock}
                     size="lg"
-                    className="w-full h-16 text-xl font-bold bg-primary/90 hover:bg-primary text-primary-foreground glowing-box transition-all duration-300 transform hover:scale-105"
+                    className="w-full h-14 md:h-16 text-lg md:text-xl font-bold bg-primary/90 hover:bg-primary text-primary-foreground glowing-box transition-all duration-300 transform hover:scale-105"
                     >
                     {loading ? (
                         <div className="flex items-center gap-2">

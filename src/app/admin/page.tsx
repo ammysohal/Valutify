@@ -151,17 +151,17 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="container py-12">
-      <h1 className="text-4xl font-headline font-bold mb-8">Admin Dashboard</h1>
+    <div className="container py-8 md:py-12">
+      <h1 className="text-3xl md:text-4xl font-headline font-bold mb-8">Admin Dashboard</h1>
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="grid gap-4 md:gap-8 md:grid-cols-2">
         <Card className="glassmorphism">
           <CardHeader>
             <CardTitle>Lifetime Claims</CardTitle>
             <CardDescription>Total accounts claimed.</CardDescription>
           </CardHeader>
           <CardContent>
-            {loadingAccounts ? <Spinner /> : <p className="text-4xl font-bold">{stats.lifetime}</p>}
+            {loadingAccounts ? <Spinner /> : <p className="text-3xl md:text-4xl font-bold">{stats.lifetime}</p>}
           </CardContent>
         </Card>
 
@@ -171,7 +171,7 @@ export default function AdminDashboard() {
             <CardDescription>Accounts claimed today.</CardDescription>
           </CardHeader>
           <CardContent>
-            {loadingAccounts ? <Spinner /> : <p className="text-4xl font-bold">{stats.today}</p>}
+            {loadingAccounts ? <Spinner /> : <p className="text-3xl md:text-4xl font-bold">{stats.today}</p>}
           </CardContent>
         </Card>
         
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
                 <CardTitle>Manage Accounts</CardTitle>
                 <CardDescription>View and delete uploaded accounts.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-x-auto">
                 {loadingAccounts ? (
                     <div className="flex justify-center p-8">
                         <Spinner />
@@ -217,7 +217,7 @@ export default function AdminDashboard() {
                         <TableBody>
                             {allAccounts && allAccounts.map((account) => (
                                 <TableRow key={account.id}>
-                                    <TableCell>{account.email}</TableCell>
+                                    <TableCell className="break-all">{account.email}</TableCell>
                                     <TableCell>
                                         <Badge variant={account.status === 'claimed' ? 'secondary' : 'default'}>
                                             {account.status}

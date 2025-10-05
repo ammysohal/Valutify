@@ -15,7 +15,6 @@ import {
 } from 'firebase/firestore';
 import { signInAnonymously, onAuthStateChanged, User } from 'firebase/auth';
 
-import AccountCard from '@/components/AccountCard';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Copy, Check } from 'lucide-react';
 import Celebration from '@/components/Celebration';
@@ -129,7 +128,7 @@ export default function ClaimPage() {
   }, [user, firestore]);
 
   return (
-    <div className="container flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center py-12">
+    <div className="container flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4">
       {account && <Celebration animationType="confetti" />}
       <div className="w-full max-w-md">
         {loading ? (
@@ -152,7 +151,7 @@ export default function ClaimPage() {
         ) : account ? (
           <>
             <div className="text-center mb-6">
-              <h1 className="font-headline text-3xl font-bold text-green-400">
+              <h1 className="font-headline text-2xl md:text-3xl font-bold text-green-400">
                 ✅ Your Minecraft Premium Account Has Been Generated!
               </h1>
               <p className="text-muted-foreground mt-2">Enjoy your new account. Copy the credentials below.</p>
@@ -165,7 +164,7 @@ export default function ClaimPage() {
                     <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <div className="relative">
-                        <Input id="email" value={account.email} readOnly />
+                        <Input id="email" value={account.email} readOnly className="pr-12" />
                         <Button
                         size="icon"
                         variant="ghost"
@@ -179,7 +178,7 @@ export default function ClaimPage() {
                     <div className="space-y-2">
                     <Label htmlFor="password">Password</Label>
                     <div className="relative">
-                        <Input id="password" type="password" value={account.password} readOnly />
+                        <Input id="password" type="password" value={account.password} readOnly className="pr-12" />
                         <Button
                         size="icon"
                         variant="ghost"
