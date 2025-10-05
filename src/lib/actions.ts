@@ -11,6 +11,7 @@ import {
   updateDoc,
   serverTimestamp,
   Timestamp,
+  orderBy,
 } from 'firebase/firestore';
 
 export type Account = {
@@ -21,9 +22,14 @@ export type Account = {
   timestamp: Timestamp;
 };
 
+export type SerializableAccount = Omit<Account, 'timestamp'> & {
+    timestamp: string;
+};
+
+
 // This function runs on the server and won't be affected by the client-side
 // error handling changes for now. We will adjust if needed.
-export async function claimAccount() {
+export async function claimAccount(): Promise<{ data?: SerializableAccount; error?: string; }> {
   try {
     const accountsRef = collection(db, 'minecraft_accounts');
     const q = query(
@@ -46,15 +52,23 @@ export async function claimAccount() {
       timestamp: serverTimestamp(),
     });
 
-    // Return a plain object, not a class instance
-    const returnData = {
-        ...accountData,
-        timestamp: accountData.timestamp.toDate().toISOString(),
+    const finalTimestamp = Timestamp.now();
+
+    // Return a plain, serializable object
+    const returnData: SerializableAccount = {
+        id: accountData.id,
+        email: accountData.email,
+        password: accountData.password,
+        status: 'claimed',
+        timestamp: finalTimestamp.toDate().toISOString(),
     }
 
     return { data: returnData };
   } catch (error) {
     console.error('Error claiming account:', error);
-    return { error: 'Failed to claim account. Please try again.' };
+    if (error instanceof Error) {
+        return { error: `Failed to claim account: ${error.message}` };
+    }
+    return { error: 'An unknown error occurred while claiming the account.' };
   }
 }

@@ -6,9 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Copy, Check } from 'lucide-react';
-import { Account } from '@/lib/actions';
+import type { SerializableAccount } from '@/lib/actions';
 
-export default function AccountCard({ account }: { account: Account }) {
+export default function AccountCard({ account }: { account: SerializableAccount }) {
   const { toast } = useToast();
   const [copied, setCopied] = useState<'email' | 'password' | null>(null);
 
