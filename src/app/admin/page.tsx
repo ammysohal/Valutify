@@ -1,14 +1,11 @@
 'use client';
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import {
   collection,
-  query,
-  where,
   Timestamp,
-  orderBy,
   doc,
 } from 'firebase/firestore';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
@@ -126,17 +123,16 @@ export default function AdminDashboard() {
       description: `${successCount} accounts are being added.`,
     });
     setAccountInput('');
-    // Data will refresh automatically via useCollection
   };
   
-  const handleDeleteAccount = async (accountId: string) => {
+  const handleDeleteAccount = (accountId: string) => {
+    if (!firestore) return;
     const docRef = doc(firestore, 'minecraft_accounts', accountId);
     deleteDocumentNonBlocking(docRef);
     toast({
         title: 'Deletion Queued',
         description: 'The account is being deleted.',
       });
-    // Data will refresh automatically via useCollection
   };
 
   if (authLoading || !user || user.email !== ADMIN_EMAIL) {
@@ -151,28 +147,30 @@ export default function AdminDashboard() {
     <div className="container py-8 md:py-12 animate-in">
       <h1 className="text-3xl md:text-4xl font-headline font-bold mb-8 animate-fade-in-down">Admin Dashboard</h1>
 
-      <div className="grid gap-4 md:gap-8 md:grid-cols-2">
-        <Card className="glassmorphism animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-          <CardHeader>
-            <CardTitle>Lifetime Claims</CardTitle>
-            <CardDescription>Total accounts claimed.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {loadingAccounts ? <Spinner /> : <p className="text-3xl md:text-4xl font-bold">{stats.lifetime}</p>}
-          </CardContent>
-        </Card>
+      <div className="grid gap-6 md:gap-8">
+        <div className="grid gap-6 md:gap-8 md:grid-cols-2">
+            <Card className="glassmorphism animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <CardHeader>
+                <CardTitle>Lifetime Claims</CardTitle>
+                <CardDescription>Total accounts claimed.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                {loadingAccounts ? <Spinner /> : <p className="text-3xl md:text-4xl font-bold">{stats.lifetime}</p>}
+            </CardContent>
+            </Card>
 
-        <Card className="glassmorphism animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <CardHeader>
-            <CardTitle>Today's Claims</CardTitle>
-            <CardDescription>Accounts claimed today.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {loadingAccounts ? <Spinner /> : <p className="text-3xl md:text-4xl font-bold">{stats.today}</p>}
-          </CardContent>
-        </Card>
+            <Card className="glassmorphism animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <CardHeader>
+                <CardTitle>Today's Claims</CardTitle>
+                <CardDescription>Accounts claimed today.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                {loadingAccounts ? <Spinner /> : <p className="text-3xl md:text-4xl font-bold">{stats.today}</p>}
+            </CardContent>
+            </Card>
+        </div>
         
-        <Card className="md:col-span-2 glassmorphism animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+        <Card className="glassmorphism animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
           <CardHeader>
             <CardTitle>Upload Accounts</CardTitle>
             <CardDescription>Add new accounts in `email:password` format, one per line.</CardDescription>
@@ -191,52 +189,86 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="md:col-span-2 glassmorphism animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+        <Card className="glassmorphism animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             <CardHeader>
                 <CardTitle>Manage Accounts</CardTitle>
                 <CardDescription>View and delete uploaded accounts.</CardDescription>
             </CardHeader>
-            <CardContent className="overflow-x-auto">
+            <CardContent>
                 {loadingAccounts ? (
                     <div className="flex justify-center p-8">
                         <Spinner />
                     </div>
                 ) : (
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Email</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Added</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {allAccounts && allAccounts.map((account) => (
-                                <TableRow key={account.id} className="animate-in">
-                                    <TableCell className="break-all">{account.email}</TableCell>
-                                    <TableCell>
-                                        <Badge variant={account.status === 'claimed' ? 'secondary' : 'default'}>
-                                            {account.status}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell>
-                                        {account.timestamp?.toDate().toLocaleDateString()}
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => handleDeleteAccount(account.id)}
-                                            className="transition-transform duration-300 hover:scale-110"
-                                            >
-                                            <Trash2 className="h-4 w-4 text-destructive" />
-                                        </Button>
-                                    </TableCell>
+                <>
+                    {/* Mobile View - Card List */}
+                    <div className="grid gap-4 md:hidden">
+                        {allAccounts && allAccounts.map((account) => (
+                            <div key={account.id} className="p-4 border rounded-lg animate-in">
+                                <div className="flex justify-between items-start">
+                                    <div className="space-y-2 flex-1 break-words pr-4">
+                                        <p className="font-semibold break-all">{account.email}</p>
+                                        <div className="flex items-center gap-2">
+                                            <Badge variant={account.status === 'claimed' ? 'secondary' : 'default'}>
+                                                {account.status}
+                                            </Badge>
+                                            <p className="text-sm text-muted-foreground">
+                                                {account.timestamp?.toDate().toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => handleDeleteAccount(account.id)}
+                                        className="transition-transform duration-300 hover:scale-110 flex-shrink-0"
+                                        >
+                                        <Trash2 className="h-4 w-4 text-destructive" />
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Desktop View - Table */}
+                    <div className="hidden md:block">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Email</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Added</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {allAccounts && allAccounts.map((account) => (
+                                    <TableRow key={account.id} className="animate-in">
+                                        <TableCell className="break-all font-medium">{account.email}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={account.status === 'claimed' ? 'secondary' : 'default'}>
+                                                {account.status}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            {account.timestamp?.toDate().toLocaleDateString()}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => handleDeleteAccount(account.id)}
+                                                className="transition-transform duration-300 hover:scale-110"
+                                                >
+                                                <Trash2 className="h-4 w-4 text-destructive" />
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                 </>
                 )}
                  {(!allAccounts || allAccounts.length === 0) && !loadingAccounts && (
                     <p className="text-center text-muted-foreground py-8">No accounts found.</p>
@@ -247,3 +279,5 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
+    
