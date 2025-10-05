@@ -39,8 +39,7 @@ export default function GeneratePage() {
 
     setTimeout(() => {
       // The user must solve the shortlink to be redirected to this URL.
-      // A unique timestamp prevents caching issues.
-      const claimUrl = `${window.location.origin}/claim?t=${Date.now()}`;
+      const claimUrl = `${window.location.origin}/claim`;
       
       // This is the shortlink URL the user will be sent to.
       // The URL is passed directly without extra encoding.
