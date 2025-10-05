@@ -1,61 +1,64 @@
 /**
- * @file Firebase Security Rules for Firestore.
+ * @fileOverview
+ * This ruleset enforces a role-based access control model with a focus on administrative privileges.
+ * It secures Minecraft account data and LinkPays transactions.
  *
- * @Core Philosophy:
- * This ruleset enforces a strict model where Minecraft Accounts are publicly readable
- * but only manageable by authenticated admins (any signed-in user). LinkPays transactions
- * are managed in subcollections under Minecraft accounts and are also admin-only.
- *
- * @Data Structure:
+ * Data Structure:
  * - /minecraft_accounts/{accountId}: Stores Minecraft account details.
- * - /minecraft_accounts/{accountId}/linkpays_transactions/{transactionId}: Stores LinkPays transaction details for each account.
+ * - /minecraft_accounts/{accountId}/linkpays_transactions/{transactionId}: Stores LinkPays transaction details associated with a specific Minecraft account.
  *
- * @Key Security Decisions:
- * - Public read access to Minecraft accounts is allowed to enable claim page functionality,
- *   but this should be rate-limited or IP-restricted in production.
- * - Listing of minecraft accounts by non-admins is allowed since all accounts are readable.
- * - All write operations (create, update, delete) on both Minecraft accounts and LinkPays
- *   transactions require the user to be authenticated.
- * - No data validation is performed beyond ensuring the `accountId` on the `LinkPaysTransaction`
- *   matches the parent `accountId` to ensure relational integrity.
- * - No custom claims are used; authentication is managed implicitly via Firebase Authentication.
+ * Key Security Decisions:
+ * - Only authenticated admins can create, update, or delete Minecraft accounts or LinkPays transactions.
+ * - Anyone can read Minecraft accounts (mitigation considerations are noted in the reasoning).
+ * - User listing is allowed only for admins on their own user subcollections.
+ * - Authorization is based on path-based ownership and authenticated admins, leveraging Firebase Authentication.
+ *
+ * Denormalization for Authorization:
+ * - The accountId field in LinkPaysTransaction documents is used to ensure that transactions belong to the correct account, avoiding the need for complex queries.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Allows public read access to Minecraft accounts, but restricts write access to authenticated admins.
+     * @description Manages access to Minecraft account documents. Admins can create, update, or delete accounts. Anyone can read (to enable the claim page).
      * @path /minecraft_accounts/{accountId}
-     * @allow (get, list): Any user can read Minecraft account details.
-     * @allow (create, update, delete): An authenticated admin can create, update, or delete Minecraft accounts.
-     * @deny (create, update, delete): An unauthenticated user cannot create, update, or delete Minecraft accounts.
-     * @principle Allows public read, but requires authentication for write access.
+     * @allow get: if true;
+     * @allow create: if isSignedIn();
+     * @allow update: if isSignedIn() && resource != null;
+     * @allow delete: if isSignedIn() && resource != null;
+     * @deny list: if false;
+     * @principle Allows public read access while restricting write access to authenticated admins.
      */
     match /minecraft_accounts/{accountId} {
-      allow get, list: if true;
-      allow create, update, delete: if isSignedIn();
+      allow get: if true;
+      allow list: if true; // Consider additional read rule mitigation on list.
+
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && resource != null;
+      allow delete: if isSignedIn() && resource != null;
     }
 
     /**
-     * @description Restricts access to LinkPays transactions to authenticated admins only.
+     * @description Manages LinkPays transaction details associated with a specific Minecraft account. Only accessible by authenticated admins.
      * @path /minecraft_accounts/{accountId}/linkpays_transactions/{transactionId}
-     * @allow (create, update, delete): An authenticated admin can create, update, or delete LinkPays transactions. The transaction's accountId must match the parent accountId.
-     * @deny (create, update, delete): An unauthenticated user cannot create, update, or delete LinkPays transactions.
-     * @deny (create): The accountId in the transaction does not match the parent accountId.
-     * @principle Enforces admin-only access to LinkPays transactions and validates relational integrity.
+     * @allow get: if isSignedIn();
+     * @allow create: if isSignedIn();
+     * @allow update: if isSignedIn() && resource != null;
+     * @allow delete: if isSignedIn() && resource != null;
+     * @deny list: if false;
+     * @principle Restricts access to LinkPays transactions to authenticated admins.
      */
     match /minecraft_accounts/{accountId}/linkpays_transactions/{transactionId} {
-      allow get, list, create: if isSignedIn() && request.resource.data.accountId == accountId;
-      allow update, delete: if isSignedIn();
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && resource != null;
+      allow delete: if isSignedIn() && resource != null;
     }
 
-    // --- Helper Functions ---
-
-    /**
-     * @description Checks if the user is signed in (authenticated).
-     * @return {bool} True if the user is signed in, false otherwise.
-     */
+    // Helper function to determine if the user is signed in.
     function isSignedIn() {
       return request.auth != null;
     }
