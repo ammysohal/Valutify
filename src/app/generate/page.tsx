@@ -1,4 +1,3 @@
-
 'use client';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -10,12 +9,12 @@ import {
   where,
   limit,
   getDocs,
-  addDoc,
   serverTimestamp,
 } from 'firebase/firestore';
 import { signInAnonymously, onAuthStateChanged, User } from 'firebase/auth';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { v4 as uuidv4 } from 'uuid';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 export default function GeneratePage() {
   const [loading, setLoading] = useState(false);
@@ -66,7 +65,11 @@ export default function GeneratePage() {
   }, [firestore]);
 
   const handleGenerate = async () => {
-    if (!inStock || !firestore || !user) return;
+    if (!inStock || !firestore || !user || !authInitialized) {
+      // If any of these are not ready, do nothing.
+      // The button is disabled, but this is a safeguard.
+      return;
+    }
 
     setLoading(true);
 
@@ -74,9 +77,9 @@ export default function GeneratePage() {
       // 1. Generate a unique, single-use token
       const claimToken = uuidv4();
 
-      // 2. Store the token in Firestore with the user's UID
+      // 2. Store the token in Firestore with the user's UID (non-blocking)
       const tokensRef = collection(firestore, 'claim_tokens');
-      await addDoc(tokensRef, {
+      addDocumentNonBlocking(tokensRef, {
         userId: user.uid,
         token: claimToken,
         createdAt: serverTimestamp(),
@@ -87,16 +90,16 @@ export default function GeneratePage() {
       const claimUrl = `${window.location.origin}/claim?token=${claimToken}`;
       
       // 4. Construct the shortlink URL
-      const linkPaysUrl = `https://linkpays.in/st?api=3295db9608441da32b8049d61b1675cde9802c5d&url=${claimUrl}`;
+      const linkPaysUrl = `https://linkpays.in/st?api=3295db9608441da32b8049d61b1675cde9802c5d&url=${encodeURIComponent(claimUrl)}`;
 
       // 5. Redirect the user
       setRedirecting(true);
       window.location.href = linkPaysUrl;
 
     } catch (error) {
-      console.error("Error generating claim token:", error);
+      console.error("An unexpected error occurred during link generation:", error);
       setLoading(false);
-      // Optionally, show an error toast to the user
+      // Optionally, show an error toast to the user for unexpected issues
     }
   };
 
